@@ -75,3 +75,20 @@ void MipsDisplay::StopEngine()
     }
     olc_Terminate();
 }
+
+void MipsDisplay::SetPixel(int x, int y, uint32_t color){
+  
+  if(x<0 ||y<0 || y>=SCREEN_H || x>=SCREEN_W){
+    return;
+  }
+  vram[y*SCREEN_W+ x ]=color;
+
+}
+
+void MipsDisplay::Clear(uint32_t color){
+    
+    for(int i=0 ; i<SCREEN_H*SCREEN_W ; i++){
+        vram[i]=color;
+    }
+
+}
