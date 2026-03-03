@@ -25,6 +25,7 @@ bool MipsDisplay::OnUserDestroy()
 
 bool MipsDisplay::OnUserUpdate(float fElapsedTime)
 {
+    Flush();
     if (GetKey(olc::Key::W).bHeld || GetKey(olc::Key::UP).bHeld)
         last_key = 1;
     else if (GetKey(olc::Key::S).bHeld || GetKey(olc::Key::DOWN).bHeld)
