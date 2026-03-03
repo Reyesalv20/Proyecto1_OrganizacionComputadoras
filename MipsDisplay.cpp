@@ -25,7 +25,6 @@ bool MipsDisplay::OnUserDestroy()
 
 bool MipsDisplay::OnUserUpdate(float fElapsedTime)
 {
-    Flush();
     if (GetKey(olc::Key::W).bHeld || GetKey(olc::Key::UP).bHeld)
         last_key = 1;
     else if (GetKey(olc::Key::S).bHeld || GetKey(olc::Key::DOWN).bHeld)
@@ -49,9 +48,20 @@ void MipsDisplay::Sleep(int ms)
 
 void MipsDisplay::Flush()
 {
-    for (int y = 0; y < SCREEN_H; y++)
+    /*for (int y = 0; y < SCREEN_H; y++)
         for (int x = 0; x < SCREEN_W; x++)
-            Draw(x, y, olc::Pixel(vram[y * SCREEN_W + x]));
+            Draw(x, y, olc::Pixel(vram[y * SCREEN_W + x]));*/
+    for (int y = 0; y < SCREEN_H; y++)
+    {
+        for (int x = 0; x < SCREEN_W; x++)
+        {
+            uint32_t c = vram[y * SCREEN_W + x];
+            uint8_t r = (c >> 16) & 0xFF;
+            uint8_t g = (c >> 8) & 0xFF;
+            uint8_t b = c & 0xFF;
+            Draw(x, y, olc::Pixel(r, g, b));
+        }
+    }
 }
 
 void MipsDisplay::RunEngine()
@@ -91,5 +101,4 @@ void MipsDisplay::Clear(uint32_t color){
     for(int i=0 ; i<SCREEN_H*SCREEN_W ; i++){
         vram[i]=color;
     }
-
 }
