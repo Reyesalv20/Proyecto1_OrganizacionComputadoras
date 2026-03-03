@@ -13,6 +13,11 @@ extern "C" ErrorCode handleSyscall(uint32_t *regs, void *mem, MemoryMap *mem_map
         case 103:
             display.Clear(regs[Register::a0]);
             return ErrorCode::Ok;
+        case 102:
+            display.Flush();
+            return ErrorCode::Ok;
+        case 101:
+            display.SetPixel(regs[Register::a0],regs[Register::a1],regs[Register::a2]);
         default:
             return ErrorCode::SyscallNotImplemented;
     }
