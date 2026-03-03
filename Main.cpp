@@ -18,6 +18,7 @@ extern "C" ErrorCode handleSyscall(uint32_t *regs, void *mem, MemoryMap *mem_map
             return ErrorCode::Ok;
         case 101:
             display.SetPixel(regs[Register::a0],regs[Register::a1],regs[Register::a2]);
+            return ErrorCode::Ok;
         default:
             return ErrorCode::SyscallNotImplemented;
     }
