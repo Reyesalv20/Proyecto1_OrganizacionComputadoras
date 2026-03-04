@@ -2,20 +2,65 @@
 .global main
 
 main:
- 
-  li $a0,5
-  li $a1,20
-  li $a2,10
-  li $a3,10
   
   li $v0,100
   syscall
-  jal draw_rectangle
+  li $s0,0
+  li $s1,0
   
-  li $v0,102
-  syscall
- 
-  jr $ra
+  Game_Loop:
+    li $a0,0x000000
+    li $v0,103  ;hacemos clear
+    syscall
+    
+    li $v0,104 ; obtenemos la tecla
+    syscall
+    
+    move $t0,$v0
+    li $t2,5
+    beq $t0,$t2,end_game ; si es 5 salta
+    
+    li $t2,1
+    beq $t0,$t2,UP 
+    
+    li $t2,2
+    beq $t0,$t2,DOWN
+    
+    li $t2,3
+    beq $t0,$t2,LEFT
+    
+    li $t2,4
+    beq $t0,$t2,RIGHT
+    j Draw
+    UP:
+      addi $s0,$s0,-1
+      j Draw
+    DOWN:
+      addi $s0,$s0,1
+      j Draw
+    RIGHT:
+      addi $s1,$s1,1
+      j Draw
+    LEFT:
+      addi $s1,$s1,-1
+      j Draw
+    
+    Draw:
+      move $a0,$s1 ;t4=x
+      move $a1,$s0 ;t3=y
+      li $a2,5
+      li $a3,5
+      jal draw_rectangle
+    
+      li $v0,102
+      syscall
+    
+      j Game_Loop
+  
+  end_game:
+    li $v0,105
+    syscall
+    jr $ra
 
 draw_horizontal_line:
   move $t0,$a0 ;#x

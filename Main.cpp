@@ -24,6 +24,9 @@ extern "C" ErrorCode handleSyscall(uint32_t *regs, void *mem, MemoryMap *mem_map
         case 105:
             display.StopEngine();
             return ErrorCode::Ok;
+        case 106:
+            display.Sleep(regs[Register::a0]);
+            return ErrorCode::Ok;
         default:
             return ErrorCode::SyscallNotImplemented;
     }
