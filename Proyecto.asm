@@ -2,6 +2,12 @@
 .global main
 
 main:
+  addi $sp,$sp,-16
+  sw $ra,0($sp)
+  sw $s0,4($sp)
+  sw $s1,8($sp)
+  li $t0,0x00FF00
+  sw $t0,12($sp)
   
   li $v0,100
   syscall
@@ -54,12 +60,22 @@ main:
     
       li $v0,102
       syscall
+      
+      li $a0,100
+      li $v0,106
+      syscall
     
       j Game_Loop
   
   end_game:
+    lw $ra,0($sp)
+    lw $s0,4($sp)
+    lw $s1,8($sp)
+    addi $sp,$sp,16
+    
     li $v0,105
     syscall
+
     jr $ra
 
 draw_horizontal_line:
@@ -82,29 +98,41 @@ end_loop:
   jr $ra
 
 draw_rectangle:
-    li $t0,0  ;#dy
-    move $t2,$a2 ;# t2=w
-    move $t3,$a3 ;# t3=h
-    move $t4,$a1 ;# t4=y
-    move $t5,$a0 ;# t5=x
-    loop_y:
-       slt $t6,$t0,$t3
-       beq $t6,$zero,end
-       li $t6,0 ;#dx
-       loop_x:
-         slt $t7,$t6,$t2
-         beq $t7,$zero,end_x
-         add $t7,$t5,$t6
-         add $t8,$t4,$t0
-         move $a0,$t7
-         move $a1,$t8
-         li $a2,0x00FF00
-         li $v0,101
-         syscall
-         addi $t6,$t6,1
-         j loop_x
-    end_x:
+    li $t0,0      ;  dy
+    move $t2,$a2   ;w
+    move $t3,$a3    ;h
+    move $t4,$a1    ;  y
+    move $t5,$a0    ; x
+    lw $t9,12($sp)   ;color
+
+loop_y:
+    slt $t6,$t0,$t3
+    beq $t6,$zero,end
+    li $t6,0          ;dx
+loop_x:
+    slt $t7,$t6,$t2
+    beq $t7,$zero,end_x
+    add $t7,$t5,$t6
+    add $t8,$t4,$t0
+
+    beq $t0,$zero,draw      ; dy=0
+    addi $t1,$t3,-1
+    beq $t0,$t1,draw        ;dy=h-1
+    beq $t6,$zero,draw     ; dx=0
+    addi $t1,$t2,-1
+    beq $t6,$t1,draw      ;dx=w-1
+    j next
+draw:
+    move $a0,$t7
+    move $a1,$t8
+    move $a2,$t9
+    li $v0,101
+    syscall
+next:
+    addi $t6,$t6,1
+    j loop_x
+end_x:
     addi $t0,$t0,1
     j loop_y
-    end:
-     jr $ra
+end:
+    jr $ra
